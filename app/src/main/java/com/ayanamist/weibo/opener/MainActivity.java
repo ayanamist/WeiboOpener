@@ -1,0 +1,101 @@
+package com.ayanamist.weibo.opener;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+
+public class MainActivity extends Activity {
+    private boolean canResolve(Intent intent) {
+        return getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY).size() > 0;
+    }
+
+    private static Intent createIntentFromUri(String uri) {
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+    }
+
+    private static Intent createUserInfoIntentFromUid(String uid) {
+        return createIntentFromUri("sinaweibo://userinfo?uid=" + uid);
+    }
+
+    private static Intent createUserInfoIntentFromNick(String nick) {
+        return createIntentFromUri("sinaweibo://userinfo?nick=" + nick);
+    }
+
+    private static Intent createDetailIntent(String mblogid) {
+        return createIntentFromUri("sinaweibo://detail?mblogid=" + mblogid);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Intent originalIntent = getIntent();
+        Uri uri = originalIntent.getData();
+        List<String> pathSegments = uri.getPathSegments();
+        int pathSegmentsSize = pathSegments.size();
+        String msg = getResources().getString(R.string.unsupport_url);
+        String uriHost = uri.getHost();
+        if (uriHost.equals("weibo.cn")) {
+            if (pathSegmentsSize == 2 && pathSegments.get(0).equals("n")) {
+                msg = openUserInfoByNick(pathSegments.get(1));
+            }
+        } else if (uriHost.equals("weibo.com")) {
+            if (pathSegmentsSize == 1) {
+                msg = openUserInfoByUid(pathSegments.get(0));
+            } else if (pathSegmentsSize == 2) {
+                msg = openDetailById(pathSegments.get(1));
+            }
+        }
+        if (msg.length() > 0) {
+            Toast.makeText(getApplicationContext(), msg,
+                    Toast.LENGTH_LONG).show();
+        }
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    private String openDetailById(String mblogid) {
+        String msg = "";
+        Intent weiboIntent = createDetailIntent(mblogid);
+        if (canResolve(weiboIntent)) {
+            startActivity(weiboIntent);
+        } else {
+            msg = getResources().getString(R.string.unsupport_detail);
+        }
+        return msg;
+    }
+
+    private String openUserInfoByNick(String nick) {
+        String msg = "";
+        try {
+            nick = URLDecoder.decode(nick, "UTF-8");
+        } catch (UnsupportedEncodingException ignored) {
+        }
+        Intent weiboIntent = createUserInfoIntentFromNick(nick);
+        if (canResolve(weiboIntent)) {
+            startActivity(weiboIntent);
+        } else {
+            msg = getResources().getString(R.string.unsupport_userinfo);
+        }
+        return msg;
+    }
+
+    private String openUserInfoByUid(String uid) {
+        String msg = "";
+        Intent weiboIntent = createUserInfoIntentFromUid(uid);
+        if (canResolve(weiboIntent)) {
+            startActivity(weiboIntent);
+        } else {
+            msg = getResources().getString(R.string.unsupport_userinfo);
+        }
+        return msg;
+    }
+
+}

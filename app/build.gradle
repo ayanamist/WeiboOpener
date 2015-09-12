@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            storeFile file('C:/Users/ayanamist/Dropbox/android-release-key.keystore')
+        }
+    }
+    defaultConfig {
+        applicationId "com.ayanamist.weibo.opener"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion '23.0.1'
+    compileSdkVersion 23
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+}

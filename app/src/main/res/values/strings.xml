@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">微博链接打开</string>
+    <string name="activity_name">微博</string>
+    <string name="unsupport_userinfo">没有合适的app打开个人详情页面</string>
+    <string name="unsupport_detail">没有合适的app打开微博详情页面</string>
+    <string name="unsupport_url">不支持的URL</string>
+</resources>
