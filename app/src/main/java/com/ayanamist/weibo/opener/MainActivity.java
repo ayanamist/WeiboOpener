@@ -44,13 +44,13 @@ public class MainActivity extends Activity {
         String uriHost = uri.getHost();
         if (uriHost.equals("weibo.cn")) {
             if (pathSegmentsSize == 2 && pathSegments.get(0).equals("n")) {
-                msg = openUserInfoByNick(pathSegments.get(1));
+                msg = openUserInfoByNick(pathSegments.get(1), originalIntent.getFlags());
             }
         } else if (uriHost.equals("weibo.com")) {
             if (pathSegmentsSize == 1) {
-                msg = openUserInfoByUid(pathSegments.get(0));
+                msg = openUserInfoByUid(pathSegments.get(0), originalIntent.getFlags());
             } else if (pathSegmentsSize == 2) {
-                msg = openDetailById(pathSegments.get(1));
+                msg = openDetailById(pathSegments.get(1), originalIntent.getFlags());
             }
         }
         if (msg.length() > 0) {
@@ -61,9 +61,10 @@ public class MainActivity extends Activity {
         finish();
     }
 
-    private String openDetailById(String mblogid) {
+    private String openDetailById(String mblogid, int flags) {
         String msg = "";
         Intent weiboIntent = createDetailIntent(mblogid);
+        weiboIntent.setFlags(flags);
         if (canResolve(weiboIntent)) {
             startActivity(weiboIntent);
         } else {
@@ -72,13 +73,14 @@ public class MainActivity extends Activity {
         return msg;
     }
 
-    private String openUserInfoByNick(String nick) {
+    private String openUserInfoByNick(String nick, int flags) {
         String msg = "";
         try {
             nick = URLDecoder.decode(nick, "UTF-8");
         } catch (UnsupportedEncodingException ignored) {
         }
         Intent weiboIntent = createUserInfoIntentFromNick(nick);
+        weiboIntent.setFlags(flags);
         if (canResolve(weiboIntent)) {
             startActivity(weiboIntent);
         } else {
@@ -87,9 +89,10 @@ public class MainActivity extends Activity {
         return msg;
     }
 
-    private String openUserInfoByUid(String uid) {
+    private String openUserInfoByUid(String uid, int flags) {
         String msg = "";
         Intent weiboIntent = createUserInfoIntentFromUid(uid);
+        weiboIntent.setFlags(flags);
         if (canResolve(weiboIntent)) {
             startActivity(weiboIntent);
         } else {
