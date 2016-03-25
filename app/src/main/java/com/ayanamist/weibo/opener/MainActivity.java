@@ -42,11 +42,15 @@ public class MainActivity extends Activity {
         int pathSegmentsSize = pathSegments.size();
         String msg = getResources().getString(R.string.unsupport_url);
         String uriHost = uri.getHost();
-        if (uriHost.equals("weibo.cn")) {
-            if (pathSegmentsSize == 2 && pathSegments.get(0).equals("n")) {
-                msg = openUserInfoByNick(pathSegments.get(1), originalIntent.getFlags());
+        if (uriHost.equalsIgnoreCase("weibo.cn") || uriHost.equalsIgnoreCase("m.weibo.cn") || uriHost.equalsIgnoreCase("www.weibo.cn")) {
+            if (pathSegmentsSize == 2) {
+                if (pathSegments.get(0).equals("n")) {
+                    msg = openUserInfoByNick(pathSegments.get(1), originalIntent.getFlags());
+                } else if (pathSegments.get(0).equals("u")) {
+                    msg = openUserInfoByUid(pathSegments.get(1), originalIntent.getFlags());
+                }
             }
-        } else if (uriHost.equals("weibo.com")) {
+        } else if (uriHost.equalsIgnoreCase("weibo.com") || uriHost.equalsIgnoreCase("www.weibo.com")) {
             if (pathSegmentsSize == 1) {
                 msg = openUserInfoByUid(pathSegments.get(0), originalIntent.getFlags());
             } else if (pathSegmentsSize == 2) {
